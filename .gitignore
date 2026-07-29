@@ -1,0 +1,18 @@
+# Build artifacts. These contain Anthropic's proprietary binaries — this repo
+# distributes packaging only, and users build from the spec against upstream's
+# own .deb. Do not commit them or attach them to Releases.
+*.rpm
+*.deb
+*.tar.xz
+*.tar.gz
+
+# rpmbuild scratch, if anyone builds inside the repo
+BUILD/
+BUILDROOT/
+RPMS/
+SRPMS/
+SOURCES/
+debian-binary
+control.tar.*
+data.tar.*
+usr/
