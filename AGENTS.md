@@ -10,9 +10,13 @@
 ## Repository layout
 
 - `claude-desktop.spec`: source metadata, checksum verification, dependency mapping, Debian-to-Fedora compatibility changes, payload ownership, and changelog.
+- `claude-desktop.rpmlintrc`: narrow allowlist for reviewed diagnostics inherent to the proprietary Electron payload; unrecognized rpmlint errors remain fatal in CI.
 - `README.md`: build/install instructions, supported Fedora/architecture claims, compatibility rationale, and the upstream-update checklist.
+- `.github/workflows/build.yml`: Fedora-container CI that builds the RPM and asserts the packaging invariants below. It scrapes `%global deb_version`, `deb_sha256`, and `appname` out of the spec with `awk`, so renaming those globals breaks it.
+- `CLAUDE.md`: condensed command reference and spec architecture for coding agents.
 - `.gitignore`: proprietary inputs/outputs and local rpmbuild or extraction artifacts.
-- There is no application source, automated test suite, or CI configuration in this repository.
+- `LICENSE` (packaging only, MIT) and `SECURITY.md` (disclosure policy).
+- There is no application source and no automated test suite. CI is the only test harness.
 
 ## Change workflow
 
@@ -32,6 +36,7 @@
 - One-time setup: `sudo dnf install rpmdevtools binutils && rpmdev-setuptree`.
 - Put the upstream archive at `~/rpmbuild/SOURCES/claude-desktop_<deb_version>_amd64.deb`. The current `%prep` expects `data.tar.xz`; verify that with `ar t` on every upstream update.
 - Fast syntax/macro check: `rpmspec --parse claude-desktop.spec >/dev/null`.
+- Do not lint the spec on its own from the repo root. rpmlint auto-discovers `claude-desktop.rpmlintrc` from the working directory even without `--rpmlintrc`, every filter in it matches a built-RPM finding, and unmatched filters are reported as `unused-rpmlintrc-filter` errors — so a spec-only target set always exits 64. Lint both together after a build: `rpmlint --rpmlintrc claude-desktop.rpmlintrc claude-desktop.spec "$RPM"`. Without the `.deb`, `rpmspec --parse` is the available spec check.
 - Full build: `rpmbuild -ba claude-desktop.spec`. Outputs belong in `~/rpmbuild/RPMS/x86_64/` and `~/rpmbuild/SRPMS/`, never in this repository.
 - Inspect the built manifest and modes with `rpm -qplv ~/rpmbuild/RPMS/x86_64/claude-desktop-*.rpm`.
 - Review RPM diagnostics from the build. Do not suppress errors or warnings without understanding whether they apply to the repackaged Electron payload.
@@ -51,29 +56,15 @@
 - Keep checksum verification before archive extraction. Never update `%global deb_sha256` without calculating it from the exact `.deb` named by `Source0`.
 - Do not claim this is an official Anthropic or Fedora package, and do not add COPR publishing instructions while redistribution permission is absent.
 
-## Pre-publish checklist (for GitHub)
+## Publishing constraints
 
-Before making this repo public:
+This repository is public. The pre-publish work is complete: the git history has
+never contained a proprietary binary, CI builds without publishing, `LICENSE` and
+`SECURITY.md` are in place, and `main` requires a PR and a passing `build` check,
+with force-pushes and deletion blocked. Keep it that way:
 
-1. **Verify `.gitignore` covers all proprietary artifacts.** The current patterns cover `.rpm`, `.deb`, `.tar.xz`, rpmbuild scratch dirs, and extracted `usr/` — that's correct. Do a dry run: `git status` should show zero untracked binaries.
-
-2. **Audit the git history.** The initial commits may have included a built `.rpm` before the `.gitignore` was added. Run `git log --stat | grep -E '\.(rpm|deb|tar\.xz)'` and if any commits added proprietary binaries, rewrite history to exclude them (or squash into a clean initial commit). The repo must never have contained the proprietary payload in any reachable commit.
-
-3. **Add CI that builds but doesn't publish.** A GitHub Actions workflow that runs `rpmbuild -ba claude-desktop.spec` on a Fedora container proves the spec works without distributing binaries. It should:
-   - Run on pushes to `main` and PRs
-   - Use a Fedora container image
-   - Install `rpmdevtools binutils` and run `rpmdev-setuptree`
-   - Download the `.deb` from upstream, build the RPM, verify with `rpm -qplv`
-   - Run `rpmlint` on the built RPM
-   - **Never** upload or cache the resulting `.rpm` or `.src.rpm` (they contain proprietary binaries)
-   - Delete the build artifacts at the end of the job
-
-4. **Add `rpmlint` to the workflow.** It catches spec issues like invalid dates, missing dependencies, and path ownership bugs.
-
-5. **Add a LICENSE file for the packaging.** The spec and README are your work — choose MIT or Apache-2.0. Make it crystal clear this license covers only the files in this repo, not the proprietary Claude Desktop application.
-
-6. **Add a `SECURITY.md` with a disclosure policy.** Something simple: "This repo contains only packaging. For security issues in Claude Desktop itself, contact Anthropic directly."
-
-7. **Check the README one more time.** Make sure every versioned URL and filename references the current version (1.24012.11). The build instructions should work copy-paste for someone with a fresh Fedora install.
-
-8. **Set up branch protection on `main`.** Require PRs, require CI to pass, and require at least one approving review before merge.
+- CI must never upload or cache the `.rpm` or `.src.rpm`, and must delete build output in an `always()` step. Adding an artifact-upload step would publish Anthropic's binaries.
+- Ignored binaries do not show up in plain `git status`. Check with `git status --ignored --short` plus a `find` for `.rpm`, `.deb`, and archive files before concluding the tree is clean.
+- No reachable commit may ever contain the proprietary payload. Audit with `git log --all --pretty=format: --name-only | sort -u` after any history rewrite or bulk add.
+- `LICENSE` covers this packaging only (MIT), not the Claude Desktop application.
+- Releases carry no attached artifacts; users build from the spec against upstream's own `.deb`.

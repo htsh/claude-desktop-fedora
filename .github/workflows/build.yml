@@ -39,10 +39,15 @@ jobs:
 
       - name: Verify .deb checksum
         run: |
-          echo "${{ steps.spec.outputs.sha256 }}  ~/rpmbuild/SOURCES/${{ steps.spec.outputs.appname }}_${{ steps.spec.outputs.version }}_amd64.deb" | sha256sum -c -
+          echo "${{ steps.spec.outputs.sha256 }}  $HOME/rpmbuild/SOURCES/${{ steps.spec.outputs.appname }}_${{ steps.spec.outputs.version }}_amd64.deb" | sha256sum -c -
 
-      - name: Run rpmlint on spec
-        run: rpmlint claude-desktop.spec
+      # Fail-fast syntax gate. rpmlint cannot run here: it auto-discovers
+      # claude-desktop.rpmlintrc from the working directory, and every filter in
+      # it describes a finding in the extracted payload, so a spec-only target
+      # set makes rpmlint report all of them as unused-rpmlintrc-filter errors.
+      # The spec is linted together with the RPM after the build instead.
+      - name: Parse spec syntax
+        run: rpmspec --parse claude-desktop.spec >/dev/null
 
       - name: Build RPM
         run: rpmbuild -ba claude-desktop.spec
@@ -54,8 +59,8 @@ jobs:
           rpm -qpi "$RPM"
           echo "=== RPM file listing ==="
           rpm -qplv "$RPM"
-          echo "=== rpmlint ==="
-          rpmlint "$RPM"
+          echo "=== rpmlint (spec + RPM together, so every filter matches) ==="
+          rpmlint --rpmlintrc claude-desktop.rpmlintrc claude-desktop.spec "$RPM"
 
       - name: Verify key packaging details
         run: |
