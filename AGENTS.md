@@ -36,7 +36,7 @@
 - One-time setup: `sudo dnf install rpmdevtools binutils && rpmdev-setuptree`.
 - Put the upstream archive at `~/rpmbuild/SOURCES/claude-desktop_<deb_version>_amd64.deb`. The current `%prep` expects `data.tar.xz`; verify that with `ar t` on every upstream update.
 - Fast syntax/macro check: `rpmspec --parse claude-desktop.spec >/dev/null`.
-- Lint the spec with `rpmlint claude-desktop.spec`. Do not add `--rpmlintrc` here: every filter describes a payload finding, and rpmlint reports unmatched filters as `unused-rpmlintrc-filter` errors, failing the step. The allowlist applies only to the built RPM: `rpmlint --rpmlintrc claude-desktop.rpmlintrc "$RPM"`.
+- Do not lint the spec on its own from the repo root. rpmlint auto-discovers `claude-desktop.rpmlintrc` from the working directory even without `--rpmlintrc`, every filter in it matches a built-RPM finding, and unmatched filters are reported as `unused-rpmlintrc-filter` errors — so a spec-only target set always exits 64. Lint both together after a build: `rpmlint --rpmlintrc claude-desktop.rpmlintrc claude-desktop.spec "$RPM"`. Without the `.deb`, `rpmspec --parse` is the available spec check.
 - Full build: `rpmbuild -ba claude-desktop.spec`. Outputs belong in `~/rpmbuild/RPMS/x86_64/` and `~/rpmbuild/SRPMS/`, never in this repository.
 - Inspect the built manifest and modes with `rpm -qplv ~/rpmbuild/RPMS/x86_64/claude-desktop-*.rpm`.
 - Review RPM diagnostics from the build. Do not suppress errors or warnings without understanding whether they apply to the repackaged Electron payload.
