@@ -55,7 +55,7 @@
 
 Before making this repo public:
 
-1. **Verify `.gitignore` covers all proprietary artifacts.** The current patterns cover `.rpm`, `.deb`, `.tar.xz`, rpmbuild scratch dirs, and extracted `usr/` — that's correct. Do a dry run: `git status` should show zero untracked binaries.
+1. **Verify `.gitignore` covers all proprietary artifacts.** The current patterns cover `.rpm`, `.deb`, `.tar.xz`, rpmbuild scratch dirs, and extracted `usr/` — that's correct. Because ignored binaries do not appear in plain `git status`, run `git status --ignored --short` and inspect the repository with `find` for ignored `.rpm`, `.deb`, and archive files. The repository directory should contain no proprietary artifacts, whether tracked, untracked, or ignored.
 
 2. **Audit the git history.** The initial commits may have included a built `.rpm` before the `.gitignore` was added. Run `git log --stat | grep -E '\.(rpm|deb|tar\.xz)'` and if any commits added proprietary binaries, rewrite history to exclude them (or squash into a clean initial commit). The repo must never have contained the proprietary payload in any reachable commit.
 
