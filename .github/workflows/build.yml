@@ -1,0 +1,83 @@
+name: Build RPM
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          dnf install -y rpmdevtools binutils rpmlint
+
+      - name: Set up rpmbuild tree
+        run: rpmdev-setuptree
+
+      - name: Parse spec
+        id: spec
+        run: |
+          VERSION=$(awk '/^%global deb_version / {print $NF}' claude-desktop.spec)
+          SHA256=$(awk '/^%global deb_sha256 / {print $NF}' claude-desktop.spec)
+          APPNAME=$(awk '/^%global appname / {print $NF}' claude-desktop.spec)
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "sha256=${SHA256}" >> "$GITHUB_OUTPUT"
+          echo "appname=${APPNAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Download upstream .deb
+        run: |
+          curl --fail --location \
+            -o ~/rpmbuild/SOURCES/${{ steps.spec.outputs.appname }}_${{ steps.spec.outputs.version }}_amd64.deb \
+            "https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/${{ steps.spec.outputs.appname }}/${{ steps.spec.outputs.appname }}_${{ steps.spec.outputs.version }}_amd64.deb"
+
+      - name: Verify .deb checksum
+        run: |
+          echo "${{ steps.spec.outputs.sha256 }}  ~/rpmbuild/SOURCES/${{ steps.spec.outputs.appname }}_${{ steps.spec.outputs.version }}_amd64.deb" | sha256sum -c -
+
+      - name: Run rpmlint on spec
+        run: rpmlint claude-desktop.spec
+
+      - name: Build RPM
+        run: rpmbuild -ba claude-desktop.spec
+
+      - name: Verify built RPM
+        run: |
+          RPM=$(ls ~/rpmbuild/RPMS/x86_64/${{ steps.spec.outputs.appname }}-${{ steps.spec.outputs.version }}-*.rpm)
+          echo "=== RPM info ==="
+          rpm -qpi "$RPM"
+          echo "=== RPM file listing ==="
+          rpm -qplv "$RPM"
+          echo "=== rpmlint ==="
+          rpmlint "$RPM"
+
+      - name: Verify key packaging details
+        run: |
+          RPM=$(ls ~/rpmbuild/RPMS/x86_64/${{ steps.spec.outputs.appname }}-${{ steps.spec.outputs.version }}-*.rpm)
+          echo "--- Checking chrome-sandbox is setuid root ---"
+          rpm -qplv "$RPM" | grep 'chrome-sandbox' | grep -q '^-rwsr-xr-x'
+          echo "--- Checking virtiofsd symlink ---"
+          rpm -qplv "$RPM" | grep '/usr/bin/virtiofsd' | grep -q '../libexec/virtiofsd'
+          echo "--- Checking OVMF firmware symlinks ---"
+          rpm -qplv "$RPM" | grep '/usr/share/OVMF/OVMF_CODE_4M.fd'
+          rpm -qplv "$RPM" | grep '/usr/share/OVMF/OVMF_VARS_4M.fd'
+          echo "--- Checking --disable-vulkan in desktop file ---"
+          cd /tmp && rpm2cpio "$RPM" | cpio -idm './usr/share/applications/com.anthropic.Claude.desktop' 2>/dev/null
+          grep -q 'Exec=claude-desktop --disable-vulkan' /tmp/usr/share/applications/com.anthropic.Claude.desktop
+          rm -rf /tmp/usr
+          echo "All packaging checks passed."
+
+      - name: Clean up build artifacts
+        if: always()
+        run: |
+          rm -rf ~/rpmbuild/RPMS/
+          rm -rf ~/rpmbuild/SRPMS/
+          rm -rf ~/rpmbuild/SOURCES/*.deb
+          rm -rf ~/rpmbuild/BUILD/
+          rm -rf ~/rpmbuild/BUILDROOT/

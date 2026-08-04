@@ -1,0 +1,30 @@
+MIT License
+
+Copyright (c) 2026 Hitesh Aidasani
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of the packaging files in this repository (the "Packaging"), to deal in the
+Packaging without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Packaging, and to permit persons to whom the Packaging is furnished to
+do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Packaging.
+
+THE PACKAGING IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE PACKAGING OR THE USE OR OTHER DEALINGS IN THE
+PACKAGING.
+
+---
+
+This license covers ONLY the packaging files in this repository (the spec
+file, documentation, CI configuration, and other repository contents created
+by the maintainer). It does NOT cover Claude Desktop itself, which is
+proprietary software owned by Anthropic PBC. Claude Desktop is subject to
+Anthropic's own license terms. This repository does not distribute Claude
+Desktop binaries; users must download them directly from Anthropic.

@@ -8,30 +8,35 @@ Verified working on Fedora 44 (x86_64).
 This is an unofficial community package. Claude Desktop itself is proprietary
 software from Anthropic; this repo only contains packaging.
 
-## Install
+The resulting RPM and SRPM contain Anthropic's proprietary application. This
+project does not redistribute either artifact and cannot be hosted on Fedora
+COPR without explicit redistribution permission from Anthropic.
 
-Once the COPR repo is up:
-
-```bash
-sudo dnf copr enable <your-username>/claude-desktop
-sudo dnf install claude-desktop
-```
-
-## Build it yourself
+## Build and install
 
 ```bash
 # One-time setup
-sudo dnf install rpmdevtools
+sudo dnf install rpmdevtools binutils
 rpmdev-setuptree
 
-# Fetch the upstream .deb
-curl -L -o ~/rpmbuild/SOURCES/claude-desktop_1.24012.9_amd64.deb \
-  'https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_1.24012.9_amd64.deb'
+# Fetch the proprietary application directly from Anthropic
+curl --fail --location \
+  -o ~/rpmbuild/SOURCES/claude-desktop_1.24012.11_amd64.deb \
+  'https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_1.24012.11_amd64.deb'
 
-# Build and install
+# Build (the spec verifies the .deb's pinned SHA-256 before extraction)
 rpmbuild -ba claude-desktop.spec
+
+# Install
 sudo dnf install ~/rpmbuild/RPMS/x86_64/claude-desktop-*.rpm
 ```
+
+Do not publish the generated RPM or SRPM; the SRPM embeds the complete upstream
+`.deb`, not just this packaging source.
+
+Like Anthropic's Debian package, the RPM installs Electron's `chrome-sandbox`
+as a root-owned setuid executable (mode `4755`). The spec preserves and verifies
+that security-sensitive permission intentionally.
 
 ## What this package fixes
 
@@ -67,29 +72,36 @@ libseccomp, libsecret, libxcb, libxkbcommon, mesa-libGL, nspr, nss, pango,
 socat, systemd-libs, util-linux-core, virtiofsd, xdg-desktop-portal,
 xdg-utils
 
-**Cowork VM:** qemu-system-x86, edk2-ovmf. The `vhost_vsock` kernel module
-autoloads — no configuration needed.
+**Cowork VM:** qemu-system-x86, edk2-ovmf, hardware virtualization enabled,
+at least 8 GB RAM, and about 25 GB free disk space. Grant your user access to
+KVM, then log out and back in:
+
+```bash
+sudo usermod -aG kvm "$USER"
+```
+
+The `vhost_vsock` kernel module should autoload when needed.
 
 **Recommended:** gnome-keyring (credential storage), xdg-desktop-portal-gtk.
 **Suggested:** libayatana-appindicator (tray icon).
 
 ## Architecture support
 
-x86_64 only. Upstream publishes an amd64 `.deb` and nothing else, and
-`Source0` points at that exact file. Adding `aarch64` to `ExclusiveArch`
-without also making `deb_name` architecture-aware would produce an "aarch64"
-RPM full of x86_64 binaries.
+x86_64 only. Anthropic also supports arm64 Linux, but this spec currently points
+to the amd64 `.deb` and maps the x86 Cowork VM dependencies. Adding `aarch64`
+to `ExclusiveArch` without making the source and dependencies architecture-aware
+would produce an "aarch64" RPM containing x86_64 binaries.
 
 ## Updating to a new upstream release
 
-1. Bump the `Version` and `%global deb_version` fields in `claude-desktop.spec`
-   (they must match).
-2. Grab the new `.deb` from the [upstream pool][pool].
-3. `rpmbuild -ba claude-desktop.spec`
-4. If it fails, the `.deb`'s internal layout probably changed — check for
-   renamed binaries or new hardcoded Debian paths.
-
-[pool]: https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/
+1. Set `Version` and `%global deb_version` to the new version in
+   `claude-desktop.spec`, and reset `Release` to `1`.
+2. Grab the new `.deb` from Anthropic and update `%global deb_sha256` with its
+   `sha256sum` output.
+3. Update the `%changelog` and the versioned download command above.
+4. Check `ar t` output and the extracted filesystem layout before building.
+5. Run `rpmbuild -ba claude-desktop.spec` and inspect the resulting RPM with
+   `rpm -qplv`.
 
 ## Credits
 

@@ -1,21 +1,24 @@
 %global appname claude-desktop
 %global appdir /usr/lib/%{appname}
-%global deb_version 1.24012.9
+%global deb_version 1.24012.11
 %global deb_name %{appname}_%{deb_version}_amd64
+%global deb_sha256 99c4bcf5e3f7d0ec44a49fbf24d7d659f2ea46e29c7ec61c77c7298522f57e76
 
 Name:           claude-desktop
-Version:        1.24012.9
+Version:        1.24012.11
 Release:        1%{?dist}
-Summary:        Official Claude AI desktop app from Anthropic
+Summary:        Unofficial Fedora package for Claude Desktop
 
 License:        Proprietary
 URL:            https://claude.com/download
 Source0:        https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/%{appname}/%{deb_name}.deb
 
-# Upstream publishes an amd64 .deb only, and Source0 above is that exact
-# file. Do not add aarch64 here without also making deb_name arch-aware —
-# otherwise an ARM builder would repackage x86_64 binaries as aarch64.
+# This spec currently selects upstream's amd64 .deb. Do not add aarch64 here
+# without also making the source name and payload architecture-aware; otherwise
+# an ARM builder would repackage x86_64 binaries as aarch64.
 ExclusiveArch:  x86_64
+
+BuildRequires:  binutils
 
 # ── Dependencies ──────────────────────────────────────────────
 # Translated from the .deb's Depends field + namcap verification (see AUR PKGBUILD).
@@ -64,13 +67,10 @@ Recommends:     gnome-keyring
 Recommends:     xdg-desktop-portal-gtk
 Suggests:       libayatana-appindicator
 
-# Avoid collisions with other Claude packages
-Conflicts:      claude
-
 %description
-Official Claude AI desktop app from Anthropic — Chat, Cowork, and
-Claude Code. This package repackages Anthropic's official Debian
-package for Fedora.
+Unofficial Fedora package for Anthropic's Claude Desktop application,
+including Chat, Cowork, and Claude Code. It repackages Anthropic's
+official Debian package without modifying the proprietary application.
 
 The Cowork feature runs inside a QEMU virtual machine, which is why
 qemu-system-x86 and edk2-ovmf are hard requirements.
@@ -78,6 +78,7 @@ qemu-system-x86 and edk2-ovmf are hard requirements.
 %prep
 # A .deb is an ar archive containing debian-binary, control.tar.xz, and data.tar.xz.
 # We only need data.tar.xz (the file payload).
+echo "%{deb_sha256}  %{SOURCE0}" | sha256sum -c -
 ar x %{SOURCE0}
 tar -xf data.tar.xz
 
@@ -143,6 +144,14 @@ ln -s ../edk2/ovmf/OVMF_VARS_4M.qcow2  %{buildroot}/usr/share/OVMF/OVMF_VARS_4M.
 /usr/share/OVMF/OVMF_VARS_4M.fd
 
 %changelog
+* Tue Aug 04 2026 Hitesh Aidasani <hitesh@gmail.com> - 1.24012.11-1
+- Update to upstream version 1.24012.11
+
+* Wed Jul 29 2026 Hitesh Aidasani <hitesh@gmail.com> - 1.24012.9-2
+- Mark the Fedora package as unofficial and remove the unnecessary claude conflict
+- Verify the upstream Debian archive checksum before extracting it
+- Correct the architecture rationale now that upstream also supports arm64
+
 * Wed Jul 29 2026 Hitesh Aidasani <hitesh@gmail.com> - 1.24012.9-1
 - Initial Fedora package, based on AUR claude-desktop PKGBUILD
 - Maps Debian filesystem paths to Fedora conventions
