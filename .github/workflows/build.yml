@@ -39,7 +39,7 @@ jobs:
 
       - name: Verify .deb checksum
         run: |
-          echo "${{ steps.spec.outputs.sha256 }}  ~/rpmbuild/SOURCES/${{ steps.spec.outputs.appname }}_${{ steps.spec.outputs.version }}_amd64.deb" | sha256sum -c -
+          echo "${{ steps.spec.outputs.sha256 }}  $HOME/rpmbuild/SOURCES/${{ steps.spec.outputs.appname }}_${{ steps.spec.outputs.version }}_amd64.deb" | sha256sum -c -
 
       - name: Run rpmlint on spec
         run: rpmlint claude-desktop.spec
