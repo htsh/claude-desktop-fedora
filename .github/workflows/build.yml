@@ -42,7 +42,11 @@ jobs:
           echo "${{ steps.spec.outputs.sha256 }}  $HOME/rpmbuild/SOURCES/${{ steps.spec.outputs.appname }}_${{ steps.spec.outputs.version }}_amd64.deb" | sha256sum -c -
 
       - name: Run rpmlint on spec
-        run: rpmlint --rpmlintrc claude-desktop.rpmlintrc claude-desktop.spec
+        # No --rpmlintrc here on purpose: every filter in claude-desktop.rpmlintrc
+        # describes a finding in the extracted payload, so a spec-only lint would
+        # report all of them as unused-rpmlintrc-filter, which rpmlint treats as
+        # an error. The filters are applied to the built RPM further down.
+        run: rpmlint claude-desktop.spec
 
       - name: Build RPM
         run: rpmbuild -ba claude-desktop.spec

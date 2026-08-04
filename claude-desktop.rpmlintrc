@@ -1,6 +1,11 @@
 # Claude Desktop is an upstream proprietary Electron binary. Keep this list
 # limited to findings that have been reviewed against the exact packaged paths;
 # new rpmlint errors must remain fatal in CI.
+#
+# Applies to the built RPM only. Passing this file to a spec-only lint fails the
+# run, because rpmlint reports each unmatched filter as an unused-rpmlintrc-filter
+# error. That also means a filter left here after its finding disappears will
+# break the build -- prune stale entries rather than keeping them "just in case".
 
 # Upstream ships this Cowork helper as a static executable.
 addFilter(r"statically-linked-binary /usr/lib/claude-desktop/resources/cowork-linux-helper$")

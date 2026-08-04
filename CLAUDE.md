@@ -28,13 +28,21 @@ curl --fail --location \
   'https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_1.24012.11_amd64.deb'
 
 rpmspec --parse claude-desktop.spec >/dev/null   # fast syntax/macro check, no source needed
-rpmlint --rpmlintrc claude-desktop.rpmlintrc claude-desktop.spec  # reviewed exceptions only
+rpmlint claude-desktop.spec                      # spec lint; no --rpmlintrc, see below
 rpmbuild -ba claude-desktop.spec                 # full build
 rpm -qplv ~/rpmbuild/RPMS/x86_64/claude-desktop-*.rpm   # inspect manifest + modes
 ```
 
 `rpmspec --parse` and `rpmlint` are the only checks runnable without the
 proprietary `.deb` — reach for them first, and say so when that's all you ran.
+
+`claude-desktop.rpmlintrc` allowlists reviewed findings in the extracted payload
+and is passed only when linting the built RPM
+(`rpmlint --rpmlintrc claude-desktop.rpmlintrc "$RPM"`). Never pass it to a
+spec-only lint: with no payload to match, rpmlint reports every filter as
+`unused-rpmlintrc-filter`, which is an error, and the step exits 64. For the same
+reason, a filter that stops matching becomes a build failure rather than silent
+dead config — so prune it when the underlying finding goes away.
 
 `.github/workflows/build.yml` does the same sequence in a `fedora:latest`
 container on pushes/PRs to `main`, then asserts the four things most likely to
