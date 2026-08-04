@@ -42,7 +42,7 @@ jobs:
           echo "${{ steps.spec.outputs.sha256 }}  $HOME/rpmbuild/SOURCES/${{ steps.spec.outputs.appname }}_${{ steps.spec.outputs.version }}_amd64.deb" | sha256sum -c -
 
       - name: Run rpmlint on spec
-        run: rpmlint claude-desktop.spec
+        run: rpmlint --rpmlintrc claude-desktop.rpmlintrc claude-desktop.spec
 
       - name: Build RPM
         run: rpmbuild -ba claude-desktop.spec
@@ -55,7 +55,7 @@ jobs:
           echo "=== RPM file listing ==="
           rpm -qplv "$RPM"
           echo "=== rpmlint ==="
-          rpmlint "$RPM"
+          rpmlint --rpmlintrc claude-desktop.rpmlintrc "$RPM"
 
       - name: Verify key packaging details
         run: |

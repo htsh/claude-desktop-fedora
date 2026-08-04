@@ -1,0 +1,21 @@
+# Claude Desktop is an upstream proprietary Electron binary. Keep this list
+# limited to findings that have been reviewed against the exact packaged paths;
+# new rpmlint errors must remain fatal in CI.
+
+# Upstream ships this Cowork helper as a static executable.
+addFilter(r"statically-linked-binary /usr/lib/claude-desktop/resources/cowork-linux-helper$")
+
+# rpmlint treats QEMU as a misspelling in prose.
+addFilter(r"spelling-error \('qemu', '%description -l en_US qemu -> emu, q emu'\)$")
+
+# Electron's sandbox helper intentionally uses upstream's root-owned 4755 mode.
+# CI separately asserts the exact owner and mode from the built RPM manifest.
+addFilter(r"setuid-binary /usr/lib/claude-desktop/chrome-sandbox root 4755$")
+addFilter(r"non-standard-executable-perm /usr/lib/claude-desktop/chrome-sandbox 4755$")
+
+# This is a regular native Node module, not a setuid executable.
+addFilter(r"missing-call-to-setgroups-before-setuid /usr/lib/claude-desktop/resources/app\.asar\.unpacked/node_modules/node-pty/prebuilds/linux-x64/pty\.node$")
+
+# These are intentional mappings of upstream Debian runtime dependencies to
+# Fedora package names. Keep the names explicit so a new dependency is reported.
+addFilter(r"explicit-lib-dependency (alsa-lib|cups-libs|dbus-libs|glib2|libX11|libXcomposite|libXdamage|libXext|libXfixes|libXrandr|libXtst|libcap-ng|libdrm|libnotify|libseccomp|libsecret|libxcb|libxkbcommon|systemd-libs)$")

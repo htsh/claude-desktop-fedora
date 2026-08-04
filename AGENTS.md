@@ -10,6 +10,7 @@
 ## Repository layout
 
 - `claude-desktop.spec`: source metadata, checksum verification, dependency mapping, Debian-to-Fedora compatibility changes, payload ownership, and changelog.
+- `claude-desktop.rpmlintrc`: narrow allowlist for reviewed diagnostics inherent to the proprietary Electron payload; unrecognized rpmlint errors remain fatal in CI.
 - `README.md`: build/install instructions, supported Fedora/architecture claims, compatibility rationale, and the upstream-update checklist.
 - `.github/workflows/build.yml`: Fedora-container CI that builds the RPM and asserts the packaging invariants below. It scrapes `%global deb_version`, `deb_sha256`, and `appname` out of the spec with `awk`, so renaming those globals breaks it.
 - `CLAUDE.md`: condensed command reference and spec architecture for coding agents.
@@ -35,6 +36,7 @@
 - One-time setup: `sudo dnf install rpmdevtools binutils && rpmdev-setuptree`.
 - Put the upstream archive at `~/rpmbuild/SOURCES/claude-desktop_<deb_version>_amd64.deb`. The current `%prep` expects `data.tar.xz`; verify that with `ar t` on every upstream update.
 - Fast syntax/macro check: `rpmspec --parse claude-desktop.spec >/dev/null`.
+- Lint the spec with its reviewed exceptions: `rpmlint --rpmlintrc claude-desktop.rpmlintrc claude-desktop.spec`.
 - Full build: `rpmbuild -ba claude-desktop.spec`. Outputs belong in `~/rpmbuild/RPMS/x86_64/` and `~/rpmbuild/SRPMS/`, never in this repository.
 - Inspect the built manifest and modes with `rpm -qplv ~/rpmbuild/RPMS/x86_64/claude-desktop-*.rpm`.
 - Review RPM diagnostics from the build. Do not suppress errors or warnings without understanding whether they apply to the repackaged Electron payload.

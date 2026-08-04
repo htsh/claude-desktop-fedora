@@ -28,7 +28,7 @@ curl --fail --location \
   'https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_1.24012.11_amd64.deb'
 
 rpmspec --parse claude-desktop.spec >/dev/null   # fast syntax/macro check, no source needed
-rpmlint claude-desktop.spec                      # spec lint (dates, deps, path ownership)
+rpmlint --rpmlintrc claude-desktop.rpmlintrc claude-desktop.spec  # reviewed exceptions only
 rpmbuild -ba claude-desktop.spec                 # full build
 rpm -qplv ~/rpmbuild/RPMS/x86_64/claude-desktop-*.rpm   # inspect manifest + modes
 ```
