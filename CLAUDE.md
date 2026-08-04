@@ -87,7 +87,6 @@ dependencies arch-aware would ship x86_64 binaries in an ARM RPM.
   app is not enough. In any verification report, separate what you actually ran
   from what the missing `.deb`, rpmbuild tools, KVM, or Fedora runtime blocked.
 
-Two stale spots in `AGENTS.md` to ignore: its "Repository layout" section says
-there is no CI configuration (there is, see above), and most of its
-"Pre-publish checklist" is done — CI, `LICENSE`, and `SECURITY.md` all exist
-now. The live items there are the git-history audit and branch protection.
+The repo is public with `main` protected (PR + one review + passing `build`).
+`AGENTS.md` covers the publishing constraints that keep the proprietary payload
+out of CI output, Releases, and git history.
