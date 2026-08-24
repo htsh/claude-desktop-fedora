@@ -1,11 +1,11 @@
 %global appname claude-desktop
 %global appdir /usr/lib/%{appname}
-%global deb_version 1.24012.11
+%global deb_version 1.34493.1
 %global deb_name %{appname}_%{deb_version}_amd64
-%global deb_sha256 99c4bcf5e3f7d0ec44a49fbf24d7d659f2ea46e29c7ec61c77c7298522f57e76
+%global deb_sha256 19829779633a277fcd72a6583426c68a4ecff7aa43a26718d6645c2e954747ca
 
 Name:           claude-desktop
-Version:        1.24012.11
+Version:        1.34493.1
 Release:        1%{?dist}
 Summary:        Unofficial Fedora package for Claude Desktop
 
@@ -90,7 +90,7 @@ cp -a usr/ %{buildroot}/usr/
 # Chromium's sandbox helper; mode 4755 so it can create the browser
 # sandbox on kernels where unprivileged user namespaces are disabled.
 # The tarball already carries this mode; setting it explicitly documents
-# that the setuid bit is intentional.
+# that the setuid bit is intentional. Verify it in rpm -qplv.
 chmod 4755 %{buildroot}%{appdir}/chrome-sandbox
 
 # ── License file ──────────────────────────────────────────────
@@ -144,6 +144,9 @@ ln -s ../edk2/ovmf/OVMF_VARS_4M.qcow2  %{buildroot}/usr/share/OVMF/OVMF_VARS_4M.
 /usr/share/OVMF/OVMF_VARS_4M.fd
 
 %changelog
+* Sun Aug 23 2026 Hitesh Aidasani <hitesh@gmail.com> - 1.34493.1-1
+- Update to upstream version 1.34493.1
+
 * Tue Aug 04 2026 Hitesh Aidasani <hitesh@gmail.com> - 1.24012.11-1
 - Update to upstream version 1.24012.11
 
