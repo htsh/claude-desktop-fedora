@@ -103,6 +103,40 @@ would produce an "aarch64" RPM containing x86_64 binaries.
 5. Run `rpmbuild -ba claude-desktop.spec` and inspect the resulting RPM with
    `rpm -qplv`.
 
+## Comparison with other Fedora builds
+
+[`bsneed/claude-desktop-fedora`][bsneed] is the other Fedora packaging in
+circulation. It predates Anthropic's official Linux packages, so it takes a
+fundamentally different approach: its build script downloads the **Windows**
+installer, unpacks `app.asar`, and substitutes a hand-written Linux
+implementation of the `claude-native-bindings` native module. It is not a Wine
+wrapper — the Electron app runs natively — but the payload is still Windows
+build output, reassembled.
+
+This repo repackages the official Linux `.deb` Anthropic publishes for Debian
+and Ubuntu. That difference drives the rest:
+
+| | This repo | `claude-desktop-fedora` |
+|---|---|---|
+| Upstream source | Official Linux `.deb`, SHA-256 pinned in the spec | Windows installer, unpacked and patched |
+| Native module | Anthropic's own Linux binary | Community reimplementation |
+| Cowork / QEMU VM | Supported; `virtiofsd` and 4M OVMF mapped to Fedora's paths | Not addressed |
+| Wayland | `--disable-vulkan` keeps Electron on native Wayland | Not addressed |
+| Packaging | `.spec` built by `rpmbuild`, linted, CI-verified | `build-fedora.sh` shell script |
+| Version pinning | `Version` + checksum in the spec | Edit `CLAUDE_DOWNLOAD_URL` in the script |
+
+The practical difference is feature coverage. Because the payload is Anthropic's
+own Linux build, everything upstream ships works as shipped — including Cowork,
+which boots a QEMU virtual machine and needs `virtiofsd` and 4M OVMF firmware at
+the paths Debian uses. Supplying those on Fedora is most of what the
+[compatibility table](#what-this-package-fixes) above is doing. A package built
+from the Windows installer has no Linux VM stack to point at.
+
+The tradeoff is scope: x86_64 only, and it tracks whatever version Anthropic has
+published for Linux.
+
+[bsneed]: https://github.com/bsneed/claude-desktop-fedora
+
 ## Credits
 
 Based on the [AUR `claude-desktop` PKGBUILD][aur] by Kevin, which did the
