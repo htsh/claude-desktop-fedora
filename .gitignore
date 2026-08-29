@@ -16,3 +16,7 @@ debian-binary
 control.tar.*
 data.tar.*
 usr/
+
+# Personal working notes (release plans, publicity drafts, etc.) — not part
+# of the packaging deliverable, never published.
+/private-notes/
