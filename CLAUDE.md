@@ -24,8 +24,8 @@ sudo dnf install rpmdevtools binutils rpmlint && rpmdev-setuptree
 
 # Fetch upstream source (must land here for rpmbuild to find it)
 curl --fail --location \
-  -o ~/rpmbuild/SOURCES/claude-desktop_1.34493.1_amd64.deb \
-  'https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_1.34493.1_amd64.deb'
+  -o ~/rpmbuild/SOURCES/claude-desktop_1.40609.0_amd64.deb \
+  'https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_1.40609.0_amd64.deb'
 
 rpmspec --parse claude-desktop.spec >/dev/null   # fast syntax/macro check, no source needed
 rpmlint --rpmlintrc claude-desktop.rpmlintrc claude-desktop.spec "$RPM"  # needs the RPM
@@ -41,7 +41,7 @@ the spec. `claude-desktop.rpmlintrc` allowlists reviewed payload findings; rpmli
 auto-discovers it from the working directory whether or not you pass
 `--rpmlintrc`, and reports any filter that matched nothing as an
 `unused-rpmlintrc-filter` **error**. So `rpmlint claude-desktop.spec` from the
-repo root always exits 64 with six unused-filter errors — that is the allowlist
+repo root always exits 64 with seven unused-filter errors — that is the allowlist
 working, not a spec problem. Pass both targets together.
 
 That strictness is worth keeping: a filter outliving its finding fails the build

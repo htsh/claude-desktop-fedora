@@ -7,15 +7,16 @@
 # rpmlint auto-discovers this file from the working directory, so it loads even
 # without --rpmlintrc. Combined with unused-rpmlintrc-filter being an error, that
 # means any rpmlint run from the repo root must include the built RPM in its
-# targets -- linting the spec alone fails with six unused-filter errors. CI
+# targets -- linting the spec alone fails with seven unused-filter errors. CI
 # therefore lints the spec and the RPM in one invocation.
 #
 # The same rule cuts the other way, usefully: a filter left here after its
 # finding disappears breaks the build. Prune stale entries; do not keep them
 # "just in case".
 
-# Upstream ships this Cowork helper as a static executable.
+# Upstream ships these Go helpers as static executables.
 addFilter(r"statically-linked-binary /usr/lib/claude-desktop/resources/cowork-linux-helper$")
+addFilter(r"statically-linked-binary /usr/lib/claude-desktop/resources/app\.asar\.unpacked/resources/github-mcp/github-mcp-server$")
 
 # rpmlint treats QEMU as a misspelling in prose.
 addFilter(r"spelling-error \('qemu', '%description -l en_US qemu -> emu, q emu'\)$")

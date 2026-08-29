@@ -1,11 +1,11 @@
 %global appname claude-desktop
 %global appdir /usr/lib/%{appname}
-%global deb_version 1.34493.1
+%global deb_version 1.40609.0
 %global deb_name %{appname}_%{deb_version}_amd64
-%global deb_sha256 19829779633a277fcd72a6583426c68a4ecff7aa43a26718d6645c2e954747ca
+%global deb_sha256 a96e96ff8eb4d4d7ffa785aba7fc23f8684b12ac83ed2ef4060f0f09f4177a98
 
 Name:           claude-desktop
-Version:        1.34493.1
+Version:        1.40609.0
 Release:        1%{?dist}
 Summary:        Unofficial Fedora package for Claude Desktop
 
@@ -144,6 +144,11 @@ ln -s ../edk2/ovmf/OVMF_VARS_4M.qcow2  %{buildroot}/usr/share/OVMF/OVMF_VARS_4M.
 /usr/share/OVMF/OVMF_VARS_4M.fd
 
 %changelog
+* Fri Aug 28 2026 Hitesh Aidasani <hitesh@gmail.com> - 1.40609.0-1
+- Update to upstream version 1.40609.0
+- Allowlist the statically linked github-mcp-server helper that upstream now
+  bundles, so rpmlint stays fatal for unreviewed findings
+
 * Sun Aug 23 2026 Hitesh Aidasani <hitesh@gmail.com> - 1.34493.1-1
 - Update to upstream version 1.34493.1
 
