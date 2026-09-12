@@ -98,6 +98,11 @@ dependencies arch-aware would ship x86_64 binaries in an ARM RPM.
   app is not enough. In any verification report, separate what you actually ran
   from what the missing `.deb`, rpmbuild tools, KVM, or Fedora runtime blocked.
 
-The repo is public with `main` protected (PR + one review + passing `build`).
+The repo is public. `main` is protected (passing `build`, force-pushes and
+deletion blocked) but this is a solo project: no approving review is required,
+and admins are exempt from the PR requirement. Routine work — upstream bumps
+especially — goes straight to `main`; the `build` workflow still runs on the
+push, so it verifies the bump right after instead of gating it. Open a PR only
+when you actually want the change staged for a second look before it lands.
 `AGENTS.md` covers the publishing constraints that keep the proprietary payload
 out of CI output, Releases, and git history.

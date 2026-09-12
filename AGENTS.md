@@ -60,8 +60,9 @@
 
 This repository is public. The pre-publish work is complete: the git history has
 never contained a proprietary binary, CI builds without publishing, `LICENSE` and
-`SECURITY.md` are in place, and `main` requires a PR and a passing `build` check,
-with force-pushes and deletion blocked. Keep it that way:
+`SECURITY.md` are in place, and `main` requires a passing `build` check, with
+force-pushes and deletion blocked. Review is not required — this is a solo
+project, and the maintainer pushes to `main` directly. Keep it that way:
 
 - CI must never upload or cache the `.rpm` or `.src.rpm`, and must delete build output in an `always()` step. Adding an artifact-upload step would publish Anthropic's binaries.
 - Ignored binaries do not show up in plain `git status`. Check with `git status --ignored --short` plus a `find` for `.rpm`, `.deb`, and archive files before concluding the tree is clean.
