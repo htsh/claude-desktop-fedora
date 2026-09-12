@@ -33,7 +33,7 @@
 
 ## Build and verification
 
-- One-time setup: `sudo dnf install rpmdevtools binutils && rpmdev-setuptree`.
+- One-time setup: `sudo dnf install rpmdevtools binutils rpmlint && rpmdev-setuptree`.
 - Put the upstream archive at `~/rpmbuild/SOURCES/claude-desktop_<deb_version>_amd64.deb`. The current `%prep` expects `data.tar.xz`; verify that with `ar t` on every upstream update.
 - Fast syntax/macro check: `rpmspec --parse claude-desktop.spec >/dev/null`.
 - Do not lint the spec on its own from the repo root. rpmlint auto-discovers `claude-desktop.rpmlintrc` from the working directory even without `--rpmlintrc`, every filter in it matches a built-RPM finding, and unmatched filters are reported as `unused-rpmlintrc-filter` errors — so a spec-only target set always exits 64. Lint both together after a build: `rpmlint --rpmlintrc claude-desktop.rpmlintrc claude-desktop.spec "$RPM"`. Without the `.deb`, `rpmspec --parse` is the available spec check.
