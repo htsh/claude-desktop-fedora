@@ -29,7 +29,7 @@ curl --fail --location \
 rpmbuild -ba claude-desktop.spec
 
 # Install (or upgrade an existing install)
-sudo dnf install ~/rpmbuild/RPMS/x86_64/claude-desktop-1.46388.2-1.*.x86_64.rpm
+sudo dnf install ~/rpmbuild/RPMS/x86_64/claude-desktop-*.rpm
 ```
 
 To move to a newer upstream release later, pull this repo, fetch the `.deb`
