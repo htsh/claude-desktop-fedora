@@ -6,7 +6,8 @@ Fedora, including the bits Cowork needs to boot its QEMU VM.
 Verified working on Fedora 44 (x86_64).
 
 This is an unofficial community package. Claude Desktop itself is proprietary
-software from Anthropic; this repo only contains packaging.
+software from Anthropic; this repo only contains packaging. The packaging is
+MIT-licensed (see `LICENSE`); the application it produces is not.
 
 The resulting RPM and SRPM contain Anthropic's proprietary application. This
 project does not redistribute either artifact and cannot be hosted on Fedora
@@ -27,9 +28,13 @@ curl --fail --location \
 # Build (the spec verifies the .deb's pinned SHA-256 before extraction)
 rpmbuild -ba claude-desktop.spec
 
-# Install
+# Install (or upgrade an existing install)
 sudo dnf install ~/rpmbuild/RPMS/x86_64/claude-desktop-*.rpm
 ```
+
+To move to a newer upstream release later, pull this repo, fetch the `.deb`
+named in the updated spec, rebuild, and run the same `dnf install` on the new
+RPM. DNF treats it as an upgrade and keeps your settings.
 
 Do not publish the generated RPM or SRPM; the SRPM embeds the complete upstream
 `.deb`, not just this packaging source.
