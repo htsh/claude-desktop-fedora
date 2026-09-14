@@ -22,8 +22,8 @@ rpmdev-setuptree
 
 # Fetch the proprietary application directly from Anthropic
 curl --fail --location \
-  -o ~/rpmbuild/SOURCES/claude-desktop_1.52386.3_amd64.deb \
-  'https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_1.52386.3_amd64.deb'
+  -o ~/rpmbuild/SOURCES/claude-desktop_1.52386.6_amd64.deb \
+  'https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_1.52386.6_amd64.deb'
 
 # Build (the spec verifies the .deb's pinned SHA-256 before extraction)
 rpmbuild -ba claude-desktop.spec
