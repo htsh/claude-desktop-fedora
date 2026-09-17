@@ -24,8 +24,8 @@ sudo dnf install rpmdevtools binutils rpmlint && rpmdev-setuptree
 
 # Fetch upstream source (must land here for rpmbuild to find it)
 curl --fail --location \
-  -o ~/rpmbuild/SOURCES/claude-desktop_1.52386.6_amd64.deb \
-  'https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_1.52386.6_amd64.deb'
+  -o ~/rpmbuild/SOURCES/claude-desktop_2.110.1_amd64.deb \
+  'https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_2.110.1_amd64.deb'
 
 rpmspec --parse claude-desktop.spec >/dev/null   # fast syntax/macro check, no source needed
 rpmlint --rpmlintrc claude-desktop.rpmlintrc claude-desktop.spec "$RPM"  # needs the RPM
