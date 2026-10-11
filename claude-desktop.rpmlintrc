@@ -32,3 +32,8 @@ addFilter(r"missing-call-to-setgroups-before-setuid /usr/lib/claude-desktop/reso
 # These are intentional mappings of upstream Debian runtime dependencies to
 # Fedora package names. Keep the names explicit so a new dependency is reported.
 addFilter(r"explicit-lib-dependency (alsa-lib|cups-libs|dbus-libs|glib2|libX11|libXcomposite|libXdamage|libXext|libXfixes|libXrandr|libXtst|libcap-ng|libdrm|libnotify|libseccomp|libsecret|libxcb|libxkbcommon|systemd-libs)$")
+
+# Upstream ships the same Anthropic Sans webfont twice inside ion-dist. The
+# payload is copied verbatim, so the duplicate stays; the byte count moves with
+# every upstream build. The per-file files-duplicate warning stays visible.
+addFilter(r"files-duplicated-waste \d+$")

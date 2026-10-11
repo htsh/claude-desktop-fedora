@@ -1,11 +1,11 @@
 %global appname claude-desktop
 %global appdir /usr/lib/%{appname}
-%global deb_version 2.9939.4
+%global deb_version 2.31226.1
 %global deb_name %{appname}_%{deb_version}_amd64
-%global deb_sha256 3cfddb23bf2911e05e27b4ed3856b8e795df94643b2c35b59deb317cf995bca0
+%global deb_sha256 5a9bebdfcb1df6ce38767b373f3a7fabf77156a2ddd8a3f5d04961da5bde305e
 
 Name:           claude-desktop
-Version:        2.9939.4
+Version:        2.31226.1
 Release:        1%{?dist}
 Summary:        Unofficial Fedora package for Claude Desktop
 
@@ -62,7 +62,8 @@ Requires:       xdg-utils
 Requires:       qemu-system-x86
 Requires:       edk2-ovmf
 
-# Optional: credential storage and tray icon
+# Optional: sandboxing, credential storage and tray icon
+Recommends:     bubblewrap
 Recommends:     gnome-keyring
 Recommends:     xdg-desktop-portal-gtk
 Suggests:       libayatana-appindicator
@@ -144,6 +145,10 @@ ln -s ../edk2/ovmf/OVMF_VARS_4M.qcow2  %{buildroot}/usr/share/OVMF/OVMF_VARS_4M.
 /usr/share/OVMF/OVMF_VARS_4M.fd
 
 %changelog
+* Sat Oct 10 2026 Hitesh Aidasani <hitesh@gmail.com> - 2.31226.1-1
+- Update to upstream version 2.31226.1
+- Recommend bubblewrap, following upstream
+
 * Sat Oct 03 2026 Hitesh Aidasani <hitesh@gmail.com> - 2.9939.4-1
 - Update to upstream version 2.9939.4
 
