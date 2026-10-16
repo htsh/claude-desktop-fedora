@@ -7,7 +7,7 @@
 # rpmlint auto-discovers this file from the working directory, so it loads even
 # without --rpmlintrc. Combined with unused-rpmlintrc-filter being an error, that
 # means any rpmlint run from the repo root must include the built RPM in its
-# targets -- linting the spec alone fails with seven unused-filter errors. CI
+# targets -- linting the spec alone fails with one unused-filter error per filter. CI
 # therefore lints the spec and the RPM in one invocation.
 #
 # The same rule cuts the other way, usefully: a filter left here after its
@@ -17,6 +17,7 @@
 # Upstream ships these Go helpers as static executables.
 addFilter(r"statically-linked-binary /usr/lib/claude-desktop/resources/cowork-linux-helper$")
 addFilter(r"statically-linked-binary /usr/lib/claude-desktop/resources/app\.asar\.unpacked/resources/github-mcp/github-mcp-server$")
+addFilter(r"statically-linked-binary /usr/lib/claude-desktop/resources/claude-ssh-askpass$")
 
 # rpmlint treats QEMU as a misspelling in prose.
 addFilter(r"spelling-error \('qemu', '%description -l en_US qemu -> emu, q emu'\)$")
@@ -32,8 +33,3 @@ addFilter(r"missing-call-to-setgroups-before-setuid /usr/lib/claude-desktop/reso
 # These are intentional mappings of upstream Debian runtime dependencies to
 # Fedora package names. Keep the names explicit so a new dependency is reported.
 addFilter(r"explicit-lib-dependency (alsa-lib|cups-libs|dbus-libs|glib2|libX11|libXcomposite|libXdamage|libXext|libXfixes|libXrandr|libXtst|libcap-ng|libdrm|libnotify|libseccomp|libsecret|libxcb|libxkbcommon|systemd-libs)$")
-
-# Upstream ships the same Anthropic Sans webfont twice inside ion-dist. The
-# payload is copied verbatim, so the duplicate stays; the byte count moves with
-# every upstream build. The per-file files-duplicate warning stays visible.
-addFilter(r"files-duplicated-waste \d+$")

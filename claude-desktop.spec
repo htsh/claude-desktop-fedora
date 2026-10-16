@@ -1,11 +1,11 @@
 %global appname claude-desktop
 %global appdir /usr/lib/%{appname}
-%global deb_version 2.31226.1
+%global deb_version 2.42304.0
 %global deb_name %{appname}_%{deb_version}_amd64
-%global deb_sha256 5a9bebdfcb1df6ce38767b373f3a7fabf77156a2ddd8a3f5d04961da5bde305e
+%global deb_sha256 74cd2ccc29d24165144e455cbc872c6cc2a24a263b83e73420e95f89166d4aa4
 
 Name:           claude-desktop
-Version:        2.31226.1
+Version:        2.42304.0
 Release:        1%{?dist}
 Summary:        Unofficial Fedora package for Claude Desktop
 
@@ -65,6 +65,7 @@ Requires:       edk2-ovmf
 # Optional: sandboxing, credential storage and tray icon
 Recommends:     bubblewrap
 Recommends:     gnome-keyring
+Recommends:     openssh-clients
 Recommends:     xdg-desktop-portal-gtk
 Suggests:       libayatana-appindicator
 
@@ -145,6 +146,14 @@ ln -s ../edk2/ovmf/OVMF_VARS_4M.qcow2  %{buildroot}/usr/share/OVMF/OVMF_VARS_4M.
 /usr/share/OVMF/OVMF_VARS_4M.fd
 
 %changelog
+* Thu Oct 15 2026 Hitesh Aidasani <hitesh@gmail.com> - 2.42304.0-1
+- Update to upstream version 2.42304.0
+- Recommend openssh-clients, following upstream's new openssh-client
+  recommendation for its bundled SSH askpass helper
+- Allowlist the statically linked claude-ssh-askpass helper and drop the
+  files-duplicated-waste filter now that upstream no longer ships the
+  duplicate webfont
+
 * Sat Oct 10 2026 Hitesh Aidasani <hitesh@gmail.com> - 2.31226.1-1
 - Update to upstream version 2.31226.1
 - Recommend bubblewrap, following upstream
