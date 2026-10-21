@@ -1,11 +1,11 @@
 %global appname claude-desktop
 %global appdir /usr/lib/%{appname}
-%global deb_version 2.42304.0
+%global deb_version 3.1623.0
 %global deb_name %{appname}_%{deb_version}_amd64
-%global deb_sha256 74cd2ccc29d24165144e455cbc872c6cc2a24a263b83e73420e95f89166d4aa4
+%global deb_sha256 d39e1d9a570f1e517f158479f5a1d903b9a74d1ef3f279362002dcad375e33cf
 
 Name:           claude-desktop
-Version:        2.42304.0
+Version:        3.1623.0
 Release:        1%{?dist}
 Summary:        Unofficial Fedora package for Claude Desktop
 
@@ -146,6 +146,9 @@ ln -s ../edk2/ovmf/OVMF_VARS_4M.qcow2  %{buildroot}/usr/share/OVMF/OVMF_VARS_4M.
 /usr/share/OVMF/OVMF_VARS_4M.fd
 
 %changelog
+* Tue Oct 20 2026 Hitesh Aidasani <hitesh@gmail.com> - 3.1623.0-1
+- Update to upstream version 3.1623.0
+
 * Thu Oct 15 2026 Hitesh Aidasani <hitesh@gmail.com> - 2.42304.0-1
 - Update to upstream version 2.42304.0
 - Recommend openssh-clients, following upstream's new openssh-client
