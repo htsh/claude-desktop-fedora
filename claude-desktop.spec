@@ -1,14 +1,14 @@
 %global appname claude-desktop
 %global appdir /usr/lib/%{appname}
-%global deb_version 3.6556.2
+%global deb_version 4.16336.0
 %global deb_name %{appname}_%{deb_version}_amd64
-%global deb_sha256 0f6ed1f2845c30419b8545a8320676d7464a19f625e05e02919238aa6978ecb4
+%global deb_sha256 3810733e93792f70eae921175d13e53d1cc6bdce9dc23117f0588087521a64bc
 # Upstream ships byte-identical assets whose mtimes differ by a second; let
 # Fedora's linkdupes brp hardlink them anyway (rpmlint files-duplicated-waste).
 %global linkdupes_options --ignore-mtime
 
 Name:           claude-desktop
-Version:        3.6556.2
+Version:        4.16336.0
 Release:        1%{?dist}
 Summary:        Unofficial Fedora package for Claude Desktop
 
@@ -149,6 +149,9 @@ ln -s ../edk2/ovmf/OVMF_VARS_4M.qcow2  %{buildroot}/usr/share/OVMF/OVMF_VARS_4M.
 /usr/share/OVMF/OVMF_VARS_4M.fd
 
 %changelog
+* Wed Nov 04 2026 Hitesh Aidasani <hitesh@gmail.com> - 4.16336.0-1
+- Update to upstream version 4.16336.0
+
 * Fri Oct 23 2026 Hitesh Aidasani <hitesh@gmail.com> - 3.6556.2-1
 - Update to upstream version 3.6556.2
 - Hardlink duplicate upstream assets regardless of mtime
