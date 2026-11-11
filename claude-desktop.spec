@@ -1,14 +1,14 @@
 %global appname claude-desktop
 %global appdir /usr/lib/%{appname}
-%global deb_version 4.23118.0
+%global deb_version 5.1231.0
 %global deb_name %{appname}_%{deb_version}_amd64
-%global deb_sha256 1ad996e8caab05c9b374646051c40cb6bb9d84f371756f15b8d3728897515a97
+%global deb_sha256 f1def40f41ffa0944c622a1e5ab90d1f00cb05fbeb85cd712f7f7b2c0989ee30
 # Upstream ships byte-identical assets whose mtimes differ by a second; let
 # Fedora's linkdupes brp hardlink them anyway (rpmlint files-duplicated-waste).
 %global linkdupes_options --ignore-mtime
 
 Name:           claude-desktop
-Version:        4.23118.0
+Version:        5.1231.0
 Release:        1%{?dist}
 Summary:        Unofficial Fedora package for Claude Desktop
 
@@ -149,6 +149,9 @@ ln -s ../edk2/ovmf/OVMF_VARS_4M.qcow2  %{buildroot}/usr/share/OVMF/OVMF_VARS_4M.
 /usr/share/OVMF/OVMF_VARS_4M.fd
 
 %changelog
+* Tue Nov 10 2026 Hitesh Aidasani <hitesh@gmail.com> - 5.1231.0-1
+- Update to upstream version 5.1231.0
+
 * Sun Nov 08 2026 Hitesh Aidasani <hitesh@gmail.com> - 4.23118.0-1
 - Update to upstream version 4.23118.0
 
